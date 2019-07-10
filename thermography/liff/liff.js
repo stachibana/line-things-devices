@@ -1,4 +1,4 @@
-const SERVICE_UUID = "0147088e-4efd-40fa-95f3-e6c7a1285607";
+const SERVICE_UUID = '0147088e-4efd-40fa-95f3-e6c7a1285607';
 const CMD_CHARACTERISTIC_UUID = '95243321-cb66-4137-802f-4cb51fd4818d';
 const MATRIX_CHARACTERISTIC_UUID = '943f94a6-3a7e-45df-8614-1e5f61fe334f';
 
@@ -30,12 +30,10 @@ window.onload = () => {
     onScreenLog('LIFF initialized');
     renderVersionField();
 
-
     // Test
     for (var i = 0; i < 8; i = i + 1) {
       g_color_matrix8x8[i] = [25, 25, 25, 25, 25, 25, 25, 25];
     }
-
 
     await liff.initPlugins(['bluetooth']);
     onScreenLog('BLE plugin initialized');
@@ -140,7 +138,10 @@ function connectDevice(device) {
       connectingUUIDSet.delete(device.id);
 
       // Notification start
-      nortificationStart(device);
+      nortificationStart(device).catch(e => {
+        onScreenLog("Error nortification start");
+      });
+
     }).catch(e => {
       flashSDKError(e);
       onScreenLog(`ERROR on gatt.connect(${device.id}): ${e}`);
