@@ -2,6 +2,7 @@
   font-size: 8pt;
 }
 
+
 input[type=range] {
   height: 58px;
   -webkit-appearance: none;
@@ -125,6 +126,12 @@ html {
 }
 body {
   margin-bottom: 50px; /* Margin bottom by footer height */
+  background-image: url("things_crane.png");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-color: #ffffff;
 }
 .footer {
   position: absolute;
