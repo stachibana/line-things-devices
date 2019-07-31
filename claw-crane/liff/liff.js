@@ -173,7 +173,8 @@ function initializeCardForDevice(device) {
     onScreenLog('Clicked disconnect button');
     device.gatt.disconnect();
   });
-
+  // removed for long tap by tachibana
+  /*
   template.querySelector('.button1').addEventListener('mouseup', () => {
     if (coinInserted == 1) {
       if (armState == 0) {
@@ -202,7 +203,7 @@ function initializeCardForDevice(device) {
         armState = 0;
       }
     }
-  });
+  });*/
 
   // Remove existing same id card
   const oldCardElement = getDeviceCard(device);
@@ -377,4 +378,51 @@ function sleep(ms) {
 
 function buf2hex(buffer) { // buffer is an ArrayBuffer
   return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+}
+
+// tachibana
+const ua = navigator.userAgent.toLowerCase();
+const isSP = /iphone|ipod|ipad|android/.test(ua);
+const eventStart = isSP ? 'touchstart' : 'mousedown';
+const eventEnd   = isSP ? 'touchend' : 'mouseup';
+const eventLeave = isSP ? 'touchmove' : 'mouseleave';
+
+let buttons = document.getElementsByClassName('btns');
+Array.prototype.forEach.call(buttons,function(element){
+  element.addEventListener(eventStart, e => {
+    e.preventDefault();
+
+    if (coinInserted == 1) {
+      if (armState == 0) { // first tap
+        updateArm(device, DEVICE_CMD_ARM_X, 1).catch(e => onScreenLog(`ERROR on updateArm(): ${e}\n${e.stack}`));
+      }
+      armState++;
+    }
+
+    btnTapped()
+  })
+
+  element.addEventListener(eventEnd, e => {
+    e.preventDefault();
+    btnReleased();
+  });
+
+  element.addEventListener(eventLeave, e => {
+    e.preventDefault();
+    let el;
+    el = isSP ? document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY) : element;
+    if (!isSP || el !== element) {
+      btnReleased(); // Caution calls everyframe. Must manage state
+    }
+  });
+});
+
+function btnTapped() {
+  // called everytime btn01 or btn02 touchstart
+  onScreenLog('btn tapped');
+}
+
+function btnReleased() {
+  // called everytime btn01 or btn02 touchend or finger goes away
+  onScreenLog('btn released');
 }
